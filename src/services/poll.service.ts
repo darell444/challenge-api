@@ -9,6 +9,14 @@ class PollService {
 
     return pollRepository.create(data);
   }
+
+  async update(id: string, data: Partial<CreatePollInput>) {
+    if (data.startDate && data.endDate && data.endDate <= data.startDate) {
+      throw new Error("End date must be after start date");
+    }
+
+    return pollRepository.update(id, data);
+  }
 }
 
 export default new PollService();
