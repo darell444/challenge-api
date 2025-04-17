@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
-import PollService  from "../services/poll.service";
+import PollService from "../services/poll.service";
 
 class PollController {
   async create(req: Request, res: Response) {
-    const poll = await PollService.create(req.body);
-    res.status(201).json(poll);
+    try {
+      const poll = await PollService.create(req.body);
+      res.status(201).json(poll);
+    } catch (err: any) {
+      res.status(400).json({ message: err.message });
+    }
   }
 
   async update(req: Request, res: Response) {
@@ -17,22 +21,32 @@ class PollController {
         res.status(404).json({ message: err.message });
       }
       const statusCode = err.message.includes("NOT_STARTED") ? 403 : 400;
-    res.status(statusCode).json({ message: err.message });
+      res.status(statusCode).json({ message: err.message });
     }
   }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
 
-    await PollService.delete(id);
-
-    res.status(204).send(); // No Content
+    try {
+      await PollService.delete(id);
+      res.status(204).send();
+    } catch (err: any) {
+      res.status(404).json({ message: "Poll not found" });
+    }
   }
 
-  async getAllPolls(req: Request, res: Response) {
-    const polls = await PollService.getAllPolls();
-    res.status(200).json(polls);
+  async fetchAll(req: Request, res: Response) {
+    try {
+      const polls = await PollService.fetAll();
+      res.status(200).json(polls);
+    } catch (err: any) {
+      console.error("Find All Polls Error:", err);
+      res.status(500).json({
+        message: err?.message || "Unexpected error while retrieving polls",
+      });
+    }
   }
-};
+}
 
 export default new PollController();
