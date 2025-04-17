@@ -49,6 +49,19 @@ class PollController {
       });
     }
   }
+
+  async vote(req: Request, res: Response) {
+    const { id: pollId } = req.params;
+    const { optionId } = req.body;
+
+    try {
+      await PollService.vote(pollId, optionId);
+      res.status(204).send();
+    } catch (err: any) {
+      const status = err.message.includes("not found") ? 404 : 400;
+      res.status(status).json({ message: err.message });
+    }
+  }
 }
 
 export default new PollController();

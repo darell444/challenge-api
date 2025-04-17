@@ -58,7 +58,7 @@ export const pollRepository = {
     });
   },
 
-  async getPollById(id: string) {
+  async findById(id: string) {
     return prisma.poll.findUnique({
       where: { id },
       include: {
@@ -78,6 +78,21 @@ export const pollRepository = {
     return prisma.poll.update({
       where: { id },
       data: { status },
+    });
+  },
+
+  async findOptionById(optionId: string) {
+    return prisma.option.findUnique({ where: { id: optionId } });
+  },
+
+  async incrementVote(optionId: string) {
+    return prisma.option.update({
+      where: { id: optionId },
+      data: {
+        votes: {
+          increment: 1,
+        },
+      },
     });
   },
 };

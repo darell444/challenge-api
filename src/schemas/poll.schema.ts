@@ -30,4 +30,8 @@ export const pollStatusQuerySchema = z.object({
   status: z.nativeEnum(PollStatus).optional(),
 });
 
+export const voteSchema = z.object({
+  optionId: z.string().uuid("Invalid option ID"),
+});
+
 export type CreatePollInput = z.infer<typeof createPollSchema>;
