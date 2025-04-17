@@ -21,4 +21,6 @@ pollRouter.put(
 
 pollRouter.delete("/polls/:id",validateParams(zod.pollIdParamSchema), PollController.delete);
 
+pollRouter.get("/polls/", PollController.getAllPolls);
+
 export default pollRouter;

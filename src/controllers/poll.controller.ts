@@ -20,6 +20,11 @@ class PollController {
 
     res.status(204).send(); // No Content
   }
+
+  async getAllPolls(req: Request, res: Response) {
+    const polls = await PollService.getAllPolls();
+    res.status(200).json(polls);
+  }
 };
 
 export default new PollController();

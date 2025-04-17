@@ -32,4 +32,12 @@ export const pollRepository = {
       where: { id },
     });
   },
+
+  async getAllPolls() {
+    return prisma.poll.findMany({
+      include: {
+        options: true,
+      },
+    });
+  }
 };
