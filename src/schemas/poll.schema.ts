@@ -9,4 +9,13 @@ export const createPollSchema = z.object({
     .min(1, "At least 1 option is required"),
 });
 
+export const updatePollSchema = z.object({
+  question: z.string().min(1).optional(),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
+  status: z
+    .enum(["NOT_STARTED", "STARTED", "IN_PROGRESS", "FINISHED"])
+    .optional(),
+});
+
 export type CreatePollInput = z.infer<typeof createPollSchema>;

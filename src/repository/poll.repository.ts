@@ -17,4 +17,12 @@ export const pollRepository = {
       },
     });
   },
+  
+  async update(id: string, data: Partial<CreatePollInput>) {
+    return prisma.poll.update({
+      where: { id },
+      data,
+      include: { options: true },
+    });
+  },
 };
