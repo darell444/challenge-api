@@ -14,7 +14,7 @@ class PollService {
 
   async update(id: string, data: Partial<CreatePollInput>) {
     const existingPoll = await pollRepository.getPollById(id);
-    
+
     if (!existingPoll) {
       throw new Error("Poll not found");
     }
@@ -37,7 +37,7 @@ class PollService {
     return pollRepository.delete(id);
   }
 
-  async getAllPolls() {
+  async fetAll() {
     return pollRepository.getAllPolls();
   }
 }
