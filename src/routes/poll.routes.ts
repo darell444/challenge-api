@@ -15,6 +15,7 @@ pollRouter.post(
 
 pollRouter.put(
   "/polls/:id",
+  validateParams(zod.pollIdParamSchema),
   validateBody(zod.updatePollSchema),
   PollController.update
 );

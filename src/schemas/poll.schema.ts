@@ -16,6 +16,10 @@ export const updatePollSchema = z.object({
   status: z
     .enum(["NOT_STARTED", "STARTED", "IN_PROGRESS", "FINISHED"])
     .optional(),
+  options: z
+    .array(z.string().min(1, "Option text is required"))
+    .min(3, "At least 3 options are required")
+    .optional(),
 });
 
 export const pollIdParamSchema = z.object({
