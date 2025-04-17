@@ -38,7 +38,9 @@ class PollController {
 
   async fetchAll(req: Request, res: Response) {
     try {
-      const polls = await PollService.fetAll();
+      const { status } = req.query;
+
+      const polls = await PollService.fetchAll(status as string);
       res.status(200).json(polls);
     } catch (err: any) {
       console.error("Find All Polls Error:", err);

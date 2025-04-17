@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma";
 import { CreatePollInput } from "../schemas/poll.schema";
+import { PollStatus } from "../domain/enums/poll-status";
 
 export const pollRepository = {
   async create(data: CreatePollInput) {
@@ -66,11 +67,17 @@ export const pollRepository = {
     });
   },
 
-  async getAllPolls() {
+  async fetchAll() {
     return prisma.poll.findMany({
-      include: {
-        options: true,
-      },
+      include: { options: true },
+      orderBy: { createdAt: "desc" },
+    });
+  },
+
+  async updateStatus(id: string, status: PollStatus) {
+    return prisma.poll.update({
+      where: { id },
+      data: { status },
     });
   },
 };
