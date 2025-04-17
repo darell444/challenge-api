@@ -1,0 +1,19 @@
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+  const socket = io("http://localhost:3333", {
+    transports: ["websocket"]
+  });
+
+  socket.on("connect", () => {
+    console.log("Conectado ao socket:", socket.id);
+  });
+
+  socket.on("poll_vote_update", (data) => {
+    console.log("Atualização recebida:", data);
+    document.body.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+  });
+
+  socket.on("connect_error", (err) => {
+    console.error("Erro de conexão:", err.message);
+  });
+</script>

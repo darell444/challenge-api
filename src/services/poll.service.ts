@@ -1,7 +1,8 @@
 import { CreatePollInput } from "../schemas/poll.schema";
 import { pollRepository } from "../repository/poll.repository";
 import { PollStatus } from "../domain/enums/poll-status";
-import { calculatePollStatus } from "../lib/poll.utils";
+import { calculatePollStatus } from "../utils/poll.utils";
+import { getIO } from "../lib/socket";
 
 class PollService {
   async create(data: CreatePollInput) {
@@ -90,7 +91,15 @@ class PollService {
       throw new Error("Option not found for this poll");
     }
 
-    await pollRepository.incrementVote(optionId);
+    const updatedOption = await pollRepository.incrementVote(optionId);
+
+    // Emitindo evento de voto
+    const io = getIO();
+    io.emit("poll_vote_update", {
+      pollId,
+      optionId,
+      newVoteCount: updatedOption.votes,
+    });
   }
 }
 
