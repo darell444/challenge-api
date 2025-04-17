@@ -37,8 +37,33 @@ class PollService {
     return pollRepository.delete(id);
   }
 
-  async fetAll() {
-    return pollRepository.getAllPolls();
+  async fetchAll(filterStatus?: string) {
+    const polls = await pollRepository.fetchAll();
+
+    const result = await Promise.all(
+      polls.map(async (poll: { id: string; startDate: Date; endDate: Date; status: string }) => {
+        const calculatedStatus: PollStatus = calculatePollStatus(
+          poll.startDate,
+          poll.endDate
+        );
+
+        // Atualiza o status no banco apenas se estiver diferente
+        if (poll.status !== calculatedStatus) {
+          await pollRepository.updateStatus(poll.id, calculatedStatus);
+        }
+
+        return {
+          ...poll,
+          status: calculatedStatus,
+        };
+      })
+    );
+
+    // Filtro por status se for passado
+    return result.filter((poll) => {
+      if (!filterStatus) return true;
+      return poll.status === filterStatus;
+    });
   }
 }
 
