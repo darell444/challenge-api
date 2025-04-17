@@ -13,7 +13,7 @@ class PollService {
   }
 
   async update(id: string, data: Partial<CreatePollInput>) {
-    const existingPoll = await pollRepository.getPollById(id);
+    const existingPoll = await pollRepository.findById(id);
 
     if (!existingPoll) {
       throw new Error("Poll not found");
@@ -41,22 +41,29 @@ class PollService {
     const polls = await pollRepository.fetchAll();
 
     const result = await Promise.all(
-      polls.map(async (poll: { id: string; startDate: Date; endDate: Date; status: string }) => {
-        const calculatedStatus: PollStatus = calculatePollStatus(
-          poll.startDate,
-          poll.endDate
-        );
+      polls.map(
+        async (poll: {
+          id: string;
+          startDate: Date;
+          endDate: Date;
+          status: string;
+        }) => {
+          const calculatedStatus: PollStatus = calculatePollStatus(
+            poll.startDate,
+            poll.endDate
+          );
 
-        // Atualiza o status no banco apenas se estiver diferente
-        if (poll.status !== calculatedStatus) {
-          await pollRepository.updateStatus(poll.id, calculatedStatus);
+          // Atualiza o status no banco apenas se estiver diferente
+          if (poll.status !== calculatedStatus) {
+            await pollRepository.updateStatus(poll.id, calculatedStatus);
+          }
+
+          return {
+            ...poll,
+            status: calculatedStatus,
+          };
         }
-
-        return {
-          ...poll,
-          status: calculatedStatus,
-        };
-      })
+      )
     );
 
     // Filtro por status se for passado
@@ -64,6 +71,26 @@ class PollService {
       if (!filterStatus) return true;
       return poll.status === filterStatus;
     });
+  }
+
+  async vote(pollId: string, optionId: string) {
+    const poll = await pollRepository.findById(pollId);
+
+    if (!poll) {
+      throw new Error("Poll not found");
+    }
+
+    const status = calculatePollStatus(poll.startDate, poll.endDate);
+    if (status !== PollStatus.IN_PROGRESS) {
+      throw new Error("Poll is not open for voting");
+    }
+
+    const option = await pollRepository.findOptionById(optionId);
+    if (!option || option.pollId !== pollId) {
+      throw new Error("Option not found for this poll");
+    }
+
+    await pollRepository.incrementVote(optionId);
   }
 }
 
