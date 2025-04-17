@@ -12,6 +12,14 @@ class PollController {
     const poll = await PollService.update(id, req.body);
     res.status(200).json(poll);
   }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params;
+
+    await PollService.delete(id);
+
+    res.status(204).send(); // No Content
+  }
 };
 
 export default new PollController();

@@ -1,21 +1,24 @@
 import { Router } from "express";
 
 import PollController from "../controllers/poll.controller";
-import { validateSchema } from "../middlewares/validateSchema";
+import { validateBody } from "../middlewares/validateBody";
+import { validateParams } from "../middlewares/validateParams";
 import * as zod from "../schemas/poll.schema";
 
-const pollRoutes = Router();
+const pollRouter = Router();
 
-pollRoutes.post(
+pollRouter.post(
   "/polls/",
-  validateSchema(zod.createPollSchema),
+  validateBody(zod.createPollSchema),
   PollController.create
 );
 
-pollRoutes.put(
+pollRouter.put(
   "/polls/:id",
-  validateSchema(zod.updatePollSchema),
+  validateBody(zod.updatePollSchema),
   PollController.update
 );
 
-export default pollRoutes;
+pollRouter.delete("/polls/:id",validateParams(zod.pollIdParamSchema), PollController.delete);
+
+export default pollRouter;
