@@ -21,6 +21,10 @@ class PollService {
   async delete(id: string) {
     return pollRepository.delete(id);
   }
+
+  async getAllPolls() {
+    return pollRepository.getAllPolls();
+  }
 }
 
 export default new PollService();
