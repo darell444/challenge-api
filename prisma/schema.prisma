@@ -25,11 +25,11 @@ model Poll {
 }
 
 model Option {
-  id      String  @id @default(uuid())
+  id      String @id @default(uuid())
   text    String
-  votes   Int     @default(0)
+  votes   Int    @default(0)
   pollId  String
-  poll    Poll    @relation(fields: [pollId], references: [id])
+  poll    Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
 }
 
 enum PollStatus {

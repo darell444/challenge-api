@@ -6,7 +6,7 @@ export const createPollSchema = z.object({
   endDate: z.coerce.date(),
   options: z
     .array(z.string().min(1, "Option text is required"))
-    .min(1, "At least 1 option is required"),
+    .min(3, "At least 3 options are required"),
 });
 
 export const updatePollSchema = z.object({
@@ -16,6 +16,10 @@ export const updatePollSchema = z.object({
   status: z
     .enum(["NOT_STARTED", "STARTED", "IN_PROGRESS", "FINISHED"])
     .optional(),
+});
+
+export const pollIdParamSchema = z.object({
+  id: z.string().uuid("Invalid poll ID"),
 });
 
 export type CreatePollInput = z.infer<typeof createPollSchema>;
