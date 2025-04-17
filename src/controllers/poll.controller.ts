@@ -9,8 +9,16 @@ class PollController {
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const poll = await PollService.update(id, req.body);
-    res.status(200).json(poll);
+    try {
+      const updated = await PollService.update(id, req.body);
+      res.status(200).json(updated);
+    } catch (err: any) {
+      if (err.message === "Poll not found") {
+        res.status(404).json({ message: err.message });
+      }
+      const statusCode = err.message.includes("NOT_STARTED") ? 403 : 400;
+    res.status(statusCode).json({ message: err.message });
+    }
   }
 
   async delete(req: Request, res: Response) {
